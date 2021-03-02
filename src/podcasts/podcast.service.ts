@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Episode } from './entities/episode.entity';
 import { Podcast } from './entities/podcast.entity';
 
 @Injectable()
 export class PodcastService {
   private podcasts: Podcast[] = [];
-  private episodes: Episode[] = [];
 
   allPodcasts(): Podcast[] {
     return this.podcasts;
