@@ -5,7 +5,7 @@ import { CreatePodcastInput } from './create-podcast.dto';
 @InputType()
 export class UpdatePodcastInput extends PartialType(CreatePodcastInput) {
   @Field(type => Number)
-  podcastId: number;
+  id: number;
 }
 
 @ObjectType()

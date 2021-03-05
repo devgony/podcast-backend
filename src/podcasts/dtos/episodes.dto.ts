@@ -4,7 +4,10 @@ import { Episode } from '../entities/episode.entity';
 import { Podcast } from '../entities/podcast.entity';
 
 @InputType()
-export class EpisodesInput extends PickType(Podcast, ['id']) {}
+export class EpisodesInput {
+  @Field(type => Number)
+  podcastId: number;
+}
 
 @ObjectType()
 export class EpisodesOutput extends CoreOutput {
