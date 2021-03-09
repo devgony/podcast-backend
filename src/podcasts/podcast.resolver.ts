@@ -1,4 +1,5 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Role } from 'src/auth/role.decorator';
 import {
   CreateEpisodeInput,
   CreateEpisodeOutput,
@@ -32,12 +33,15 @@ import { PodcastService } from './podcast.service';
 @Resolver()
 export class PodcastResolver {
   constructor(private readonly podcastService: PodcastService) {}
+
   @Query(returns => PodcastsOutput)
+  @Role(['Any'])
   getPodcasts(): Promise<PodcastsOutput> {
     return this.podcastService.getPodcasts();
   }
 
   @Mutation(returns => CreatePodcastOutput)
+  @Role(['Host'])
   createPodcast(
     @Args('input') createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
@@ -45,6 +49,7 @@ export class PodcastResolver {
   }
 
   @Query(returns => PodcastOutput)
+  @Role(['Any'])
   getPodcast(
     @Args('input') podcastInput: PodcastInput,
   ): Promise<PodcastOutput> {
@@ -52,6 +57,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => UpdatePodcastOutput)
+  @Role(['Host'])
   updatePodcast(
     @Args('input') updatePodcastInput: UpdatePodcastInput,
   ): Promise<UpdatePodcastOutput> {
@@ -59,6 +65,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => DeletePodcastOutput)
+  @Role(['Host'])
   detelePodcast(
     @Args('input') deletePodcastInput: DeletePodcastInput,
   ): Promise<DeletePodcastOutput> {
@@ -66,6 +73,7 @@ export class PodcastResolver {
   }
 
   @Query(returns => EpisodesOutput)
+  @Role(['Any'])
   getEpisodes(
     @Args('input') episodesInput: EpisodesInput,
   ): Promise<EpisodesOutput> {
@@ -73,6 +81,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => CreateEpisodeOutput)
+  @Role(['Host'])
   createEpisode(
     @Args('input') createEpisodeInput: CreateEpisodeInput,
   ): Promise<CreateEpisodeOutput> {
@@ -80,6 +89,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => UpdateEpisodeOutput)
+  @Role(['Host'])
   updateEpisode(
     @Args('input') updateEpisodeInput: UpdateEpisodeInput,
   ): Promise<UpdateEpisodeOutput> {
@@ -87,6 +97,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => DeleteEpisodeOutput)
+  @Role(['Host'])
   deleteEpisode(
     @Args('input') deleteEpisodeInput: DeleteEpisodeInput,
   ): Promise<DeleteEpisodeOutput> {

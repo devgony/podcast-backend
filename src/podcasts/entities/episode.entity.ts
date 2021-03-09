@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { CoreEntity } from 'src/common/entities/core.entity';
 import {
   Column,
   Entity,
@@ -12,11 +13,7 @@ import { Podcast } from './podcast.entity';
 @InputType('EpdisodeInputType', { isAbstract: true })
 @ObjectType()
 @Entity()
-export class Episode {
-  @PrimaryGeneratedColumn()
-  @Field(type => Number)
-  id: number;
-
+export class Episode extends CoreEntity {
   @Column()
   @Field(type => String)
   content: string;
