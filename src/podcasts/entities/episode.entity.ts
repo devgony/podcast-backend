@@ -1,4 +1,5 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import {
   Column,
@@ -16,6 +17,7 @@ import { Podcast } from './podcast.entity';
 export class Episode extends CoreEntity {
   @Column()
   @Field(type => String)
+  @IsString()
   content: string;
 
   @Field(type => Podcast)
@@ -24,7 +26,4 @@ export class Episode extends CoreEntity {
     nullable: false,
   })
   podcast: Podcast;
-
-  // @RelationId((episode: Episode) => episode.podcast)
-  // podcastId: number;
 }

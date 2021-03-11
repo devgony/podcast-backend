@@ -4,13 +4,13 @@ import { Episode } from '../entities/episode.entity';
 import { Podcast } from '../entities/podcast.entity';
 
 @InputType()
-export class EpisodesInput {
+export class GetEpisodesInput {
   @Field(type => Number)
   podcastId: number;
 }
 
 @ObjectType()
-export class EpisodesOutput extends CoreOutput {
+export class GetEpisodesOutput extends CoreOutput {
   @Field(type => [Episode], { nullable: true })
   episodes?: Episode[];
 }

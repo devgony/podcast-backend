@@ -11,7 +11,7 @@ import { SeeProfileInput, SeeProfileOutput } from './dtos/see-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
-@Resolver()
+@Resolver(of => User)
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 

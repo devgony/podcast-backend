@@ -16,9 +16,9 @@ import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
-import { EpisodesInput, EpisodesOutput } from './dtos/episodes.dto';
-import { PodcastInput, PodcastOutput } from './dtos/podcast.dto';
-import { PodcastsOutput } from './dtos/podcasts.dto';
+import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
+import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
+import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import {
   UpdateEpisodeInput,
   UpdateEpisodeOutput,
@@ -30,13 +30,13 @@ import {
 import { Podcast } from './entities/podcast.entity';
 import { PodcastService } from './podcast.service';
 
-@Resolver()
+@Resolver(of => Podcast)
 export class PodcastResolver {
   constructor(private readonly podcastService: PodcastService) {}
 
-  @Query(returns => PodcastsOutput)
+  @Query(returns => GetPodcastsOutput)
   @Role(['Any'])
-  getPodcasts(): Promise<PodcastsOutput> {
+  getPodcasts(): Promise<GetPodcastsOutput> {
     return this.podcastService.getPodcasts();
   }
 
@@ -48,11 +48,11 @@ export class PodcastResolver {
     return this.podcastService.createPodcast(createPodcastInput);
   }
 
-  @Query(returns => PodcastOutput)
+  @Query(returns => GetPodcastOutput)
   @Role(['Any'])
   getPodcast(
-    @Args('input') podcastInput: PodcastInput,
-  ): Promise<PodcastOutput> {
+    @Args('input') podcastInput: GetPodcastInput,
+  ): Promise<GetPodcastOutput> {
     return this.podcastService.getPodcast(podcastInput);
   }
 
@@ -72,11 +72,11 @@ export class PodcastResolver {
     return this.podcastService.detelePodcast(deletePodcastInput);
   }
 
-  @Query(returns => EpisodesOutput)
+  @Query(returns => GetEpisodesOutput)
   @Role(['Any'])
   getEpisodes(
-    @Args('input') episodesInput: EpisodesInput,
-  ): Promise<EpisodesOutput> {
+    @Args('input') episodesInput: GetEpisodesInput,
+  ): Promise<GetEpisodesOutput> {
     return this.podcastService.getEpisodes(episodesInput);
   }
 

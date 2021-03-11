@@ -17,9 +17,9 @@ import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
-import { EpisodesInput, EpisodesOutput } from './dtos/episodes.dto';
-import { PodcastInput, PodcastOutput } from './dtos/podcast.dto';
-import { PodcastsOutput } from './dtos/podcasts.dto';
+import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
+import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
+import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { UpdateEpisodeInput } from './dtos/update-episode.dto';
 import {
   UpdatePodcastInput,
@@ -49,7 +49,7 @@ export class PodcastService {
   ) {}
   // private podcasts: Podcast[] = [DEFAULT_DATA];
 
-  async getPodcasts(): Promise<PodcastsOutput> {
+  async getPodcasts(): Promise<GetPodcastsOutput> {
     try {
       const podcasts = await this.podcasts.find();
       return {
@@ -72,9 +72,11 @@ export class PodcastService {
     }
   }
 
-  async getPodcast({ id }: PodcastInput): Promise<PodcastOutput> {
+  async getPodcast({ id }: GetPodcastInput): Promise<GetPodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(id);
+      const podcast = await this.podcasts.findOne(id, {
+        relations: ['episodes'],
+      });
       if (!podcast) {
         return {
           ok: false,
@@ -117,7 +119,9 @@ export class PodcastService {
     }
   }
 
-  async getEpisodes({ podcastId }: EpisodesInput): Promise<EpisodesOutput> {
+  async getEpisodes({
+    podcastId,
+  }: GetEpisodesInput): Promise<GetEpisodesOutput> {
     try {
       const episodes = await this.episodes.find({
         podcast: { id: podcastId },

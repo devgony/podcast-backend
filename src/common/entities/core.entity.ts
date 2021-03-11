@@ -5,7 +5,7 @@ import { CreateDateColumn, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class CoreEntity {
   @PrimaryGeneratedColumn()
-  @Field(Type => Int)
+  @Field(type => Int)
   id: number;
 
   @CreateDateColumn()

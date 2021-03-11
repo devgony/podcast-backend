@@ -3,10 +3,10 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Podcast } from '../entities/podcast.entity';
 
 @InputType()
-export class PodcastInput extends PickType(Podcast, ['id']) {}
+export class GetPodcastInput extends PickType(Podcast, ['id']) {}
 
 @ObjectType()
-export class PodcastOutput extends CoreOutput {
+export class GetPodcastOutput extends CoreOutput {
   @Field(type => Podcast, { nullable: true })
   podcast?: Podcast;
 }
