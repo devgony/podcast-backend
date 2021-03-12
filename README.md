@@ -8,7 +8,7 @@
 
 ### ✅ D4: TypeORM > Fake DB
 
-### ✅ D5: User Time!
+### ✅ D9: User Time!
 
 #### requirements for the user authentication
 
@@ -27,6 +27,14 @@
 - login
 - editProfile
 - seeProfile
+```
+
+### ✅ D12: Unit Testing!
+
+```
+- podcasts.service.spec.ts
+- jwt.service.spec.ts
+- users.service.spec.ts
 ```
 
 ---

@@ -69,7 +69,7 @@ export class PodcastResolver {
   detelePodcast(
     @Args('input') deletePodcastInput: DeletePodcastInput,
   ): Promise<DeletePodcastOutput> {
-    return this.podcastService.detelePodcast(deletePodcastInput);
+    return this.podcastService.deletePodcast(deletePodcastInput);
   }
 
   @Query(returns => GetEpisodesOutput)

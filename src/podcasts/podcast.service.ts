@@ -57,7 +57,7 @@ export class PodcastService {
         podcasts,
       };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not get podcasts' };
     }
   }
 
@@ -65,10 +65,16 @@ export class PodcastService {
     createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
     try {
+      const podcastExists = await this.podcasts.findOne(
+        createPodcastInput.title,
+      );
+      if (podcastExists) {
+        return { ok: false, error: 'podcast with that title already exists' };
+      }
       await this.podcasts.save(this.podcasts.create(createPodcastInput));
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not create podcast' };
     }
   }
 
@@ -85,7 +91,7 @@ export class PodcastService {
       }
       return { ok: true, podcast };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not get podcast' };
     }
   }
 
@@ -100,11 +106,11 @@ export class PodcastService {
       await this.podcasts.save([updatePodcastInput]);
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not update podcast' };
     }
   }
 
-  async detelePodcast({
+  async deletePodcast({
     id,
   }: DeletePodcastInput): Promise<DeletePodcastOutput> {
     try {
@@ -115,7 +121,7 @@ export class PodcastService {
       await this.podcasts.delete(id);
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not delete podcast' };
     }
   }
 
@@ -127,11 +133,11 @@ export class PodcastService {
         podcast: { id: podcastId },
       });
       if (!episodes) {
-        return { ok: false, error: 'Episode not found' };
+        return { ok: false, error: 'Not found. wrong poadcast id' };
       }
       return { ok: true, episodes };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not get episodes' };
     }
   }
 
@@ -153,14 +159,14 @@ export class PodcastService {
         id: createEpisodeInput.podcastId,
       });
       if (!podcast) {
-        return { ok: false, error: 'Podcast to create episode not found' };
+        return { ok: false, error: 'Not found. wrong poadcast id' };
       }
       await this.episodes.save(
         this.episodes.create({ ...createEpisodeInput, podcast }),
       );
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not create episode' };
     }
   }
 
@@ -175,7 +181,7 @@ export class PodcastService {
       await this.episodes.save([{ ...updateEpisodeInput }]);
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not update episode' };
     }
   }
 
@@ -190,7 +196,7 @@ export class PodcastService {
       await this.episodes.delete(deleteEpisodeInput.id);
       return { ok: true };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'Could not delete episode' };
     }
   }
 }

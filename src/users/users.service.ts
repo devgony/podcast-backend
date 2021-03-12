@@ -30,7 +30,7 @@ export class UsersService {
     try {
       const userExists = await this.users.findOne({ email });
       if (userExists) {
-        return { ok: false, error: ' There is a user with that email already' };
+        return { ok: false, error: 'There is a user with that email already' };
       }
       const user = await this.users.save(
         this.users.create({ email, password, role }),
@@ -41,7 +41,7 @@ export class UsersService {
       // send verification by email
       return { ok: true };
     } catch (error) {
-      return { ok: false, error: "Can't create account" };
+      return { ok: false, error: "Couldn't create account" };
     }
   }
 
@@ -61,7 +61,7 @@ export class UsersService {
       const token = this.jwtService.sign(user.id);
       return { ok: true, token };
     } catch (error) {
-      return { ok: false, error: "Can't log user in" };
+      return { ok: false, error: "Couldn't log user in" };
     }
   }
 
@@ -80,12 +80,12 @@ export class UsersService {
       const user = await this.users.findOneOrFail({ id });
       return { ok: true, user };
     } catch (error) {
-      return { ok: false, error };
+      return { ok: false, error: 'User Not Found' };
     }
   }
 
   async editProfile(
-    id,
+    id: number,
     { email, password }: EditProfileInput,
   ): Promise<EditProfileOutput> {
     try {
