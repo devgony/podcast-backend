@@ -85,7 +85,7 @@ export class UsersService {
   }
 
   async editProfile(
-    id: number,
+    id,
     { email, password }: EditProfileInput,
   ): Promise<EditProfileOutput> {
     try {
