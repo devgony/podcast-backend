@@ -27,10 +27,18 @@ export class UsersResolver {
     return this.usersService.login(loginInput);
   }
 
+  @Query(returns => User)
+  @Role(['Any'])
+  me(@AuthUser() authUser: User) {
+    return authUser;
+  }
+
   @Query(returns => SeeProfileOutput)
   @Role(['Any'])
-  seeProfile(@AuthUser() { id }: User): Promise<SeeProfileOutput> {
-    return this.usersService.seeProfile({ id });
+  seeProfile(
+    @Args('input') seeProfileInput: SeeProfileInput,
+  ): Promise<SeeProfileOutput> {
+    return this.usersService.seeProfile(seeProfileInput);
   }
 
   @Mutation(returns => EditProfileOutput)

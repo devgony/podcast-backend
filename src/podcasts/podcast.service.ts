@@ -65,9 +65,9 @@ export class PodcastService {
     createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
     try {
-      const podcastExists = await this.podcasts.findOne(
-        createPodcastInput.title,
-      );
+      const podcastExists = await this.podcasts.findOne({
+        title: createPodcastInput.title,
+      });
       if (podcastExists) {
         return { ok: false, error: 'podcast with that title already exists' };
       }

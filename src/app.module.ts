@@ -20,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       validationSchema: Joi.object({
+        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
         PRIVATE_KEY: Joi.string().required(),
       }),
     }),
@@ -36,8 +37,9 @@ import { AuthModule } from './auth/auth.module';
     }),
     TypeOrmModule.forRoot({
       type: 'sqlite',
-      database: 'db.sqlite',
-      logging: true,
+      database: process.env.DATABASE_URL,
+      logging:
+        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       synchronize: true,
       entities: [Podcast, Episode, Verification, User],
     }),

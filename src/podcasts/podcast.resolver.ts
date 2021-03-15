@@ -66,7 +66,7 @@ export class PodcastResolver {
 
   @Mutation(returns => DeletePodcastOutput)
   @Role(['Host'])
-  detelePodcast(
+  deletePodcast(
     @Args('input') deletePodcastInput: DeletePodcastInput,
   ): Promise<DeletePodcastOutput> {
     return this.podcastService.deletePodcast(deletePodcastInput);
