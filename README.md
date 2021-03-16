@@ -37,6 +37,9 @@
 - users.service.spec.ts
 ```
 
+### ✅ D16: Unit Testing!
+- E2E test the users.resolver.ts and podcasts.resolver.ts
+
 ---
 
 > ## Note
