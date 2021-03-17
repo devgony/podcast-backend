@@ -40,6 +40,11 @@
 ### ✅ D16: Unit Testing!
 - E2E test the users.resolver.ts and podcasts.resolver.ts
 
+### ✅ D17: Roles!
+- New update!: To test Listener role, `likePodcast` resolver is created
+- `likePodcast` can be called `only` by user with `Listener role`
+- `likePodcast` will like the podcast if never been liked, otherwise dislike
+
 ---
 
 > ## Note

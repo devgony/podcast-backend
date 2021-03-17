@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 import { Raw, Repository } from 'typeorm';
 import {
   CreateEpisodeInput,
@@ -20,6 +21,7 @@ import {
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
+import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
 import { UpdateEpisodeInput } from './dtos/update-episode.dto';
 import {
   UpdatePodcastInput,
@@ -46,6 +48,7 @@ export class PodcastService {
   constructor(
     @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
+    @InjectRepository(User) private readonly users: Repository<User>,
   ) {}
   // private podcasts: Podcast[] = [DEFAULT_DATA];
 
@@ -197,6 +200,31 @@ export class PodcastService {
       return { ok: true };
     } catch (error) {
       return { ok: false, error: 'Could not delete episode' };
+    }
+  }
+
+  async likePodcast({
+    userId,
+    podcastId,
+  }: LikePodcastInput): Promise<LikePodcastOutput> {
+    try {
+      const podcast = await this.podcasts.findOne({ id: podcastId });
+      const user = await this.users.findOne(userId);
+      const filterdLikedBy = podcast.likedBy.filter(user => user.id !== userId);
+      const likeExists = podcast.likedBy.length !== filterdLikedBy.length;
+      if (likeExists) {
+        // already liked? => dislike
+        podcast.likedBy = filterdLikedBy;
+        this.podcasts.save(podcast);
+        return { ok: true };
+      }
+      // do like
+      podcast.likedBy.push(user);
+      await this.podcasts.save(podcast);
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not like/dislike it' };
     }
   }
 }

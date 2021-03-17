@@ -1,7 +1,15 @@
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsNumber, IsString, Max, Min } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Episode } from './episode.entity';
 
 @InputType('PodcastInputType', { isAbstract: true })
@@ -28,4 +36,9 @@ export class Podcast extends CoreEntity {
   @Field(type => [Episode])
   @OneToMany(type => Episode, episode => episode.podcast)
   episodes: Episode[];
+
+  @Field(type => [User])
+  @ManyToMany(type => User, { eager: true })
+  @JoinTable()
+  likedBy: User[];
 }

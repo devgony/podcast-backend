@@ -1,5 +1,7 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
+import { User } from 'src/users/entities/user.entity';
 import {
   CreateEpisodeInput,
   CreateEpisodeOutput,
@@ -19,6 +21,7 @@ import {
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
+import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
 import {
   UpdateEpisodeInput,
   UpdateEpisodeOutput,
@@ -102,5 +105,14 @@ export class PodcastResolver {
     @Args('input') deleteEpisodeInput: DeleteEpisodeInput,
   ): Promise<DeleteEpisodeOutput> {
     return this.podcastService.deleteEpisode(deleteEpisodeInput);
+  }
+
+  @Mutation(returns => LikePodcastOutput)
+  @Role(['Listener']) // only listeners can like or dislike
+  likePodcast(
+    @AuthUser() { id: userId }: User,
+    @Args('input') podcastId: number,
+  ): Promise<LikePodcastOutput> {
+    return this.podcastService.likePodcast({ userId, podcastId });
   }
 }
