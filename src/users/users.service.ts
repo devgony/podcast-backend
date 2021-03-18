@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from 'src/jwt/jwt.service';
+import { Episode } from 'src/podcasts/entities/episode.entity';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { Repository } from 'typeorm';
 import {
   CreateAccountInput,
@@ -9,7 +11,16 @@ import {
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import {
+  MarkEpisodeAsPlayedInput,
+  MarkEpisodeAsPlayedOutput,
+} from './dtos/mark-episode-as-played.dto';
 import { SeeProfileInput, SeeProfileOutput } from './dtos/see-profile.dto';
+import { SeeSubscriptionsOutput } from './dtos/see-subscriptions.dto';
+import {
+  SubscribeToPodcastInput,
+  SubscribeToPodcastOutput,
+} from './dtos/subscribe-to-podcast.dto';
 import { User } from './entities/user.entity';
 import { Verification } from './entities/verification.entity';
 
@@ -17,6 +28,9 @@ import { Verification } from './entities/verification.entity';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
+    @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
+    // @InjectRepository(subscribedPodcast) private readonly subscribedPodcasts: Repository<subscribedPodcast>,
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
@@ -41,6 +55,7 @@ export class UsersService {
       // send verification by email
       return { ok: true };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: "Couldn't create account" };
     }
   }
@@ -61,6 +76,7 @@ export class UsersService {
       const token = this.jwtService.sign(user.id);
       return { ok: true, token };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: "Couldn't log user in" };
     }
   }
@@ -106,6 +122,78 @@ export class UsersService {
       return { ok: true };
     } catch (error) {
       return { ok: false, error: 'Could not update profile' };
+    }
+  }
+
+  async subscribeToPodcast(
+    userId: number,
+    { podcastId }: SubscribeToPodcastInput,
+  ): Promise<SubscribeToPodcastOutput> {
+    try {
+      const podcast = await this.podcasts.findOne(podcastId);
+      if (!podcast) {
+        return { ok: false, error: 'Podcast not found.' };
+      }
+      const user = await this.users.findOne(userId, {
+        relations: ['subscribedPodcasts'],
+      });
+      if (!user) {
+        return { ok: false, error: 'User not found.' };
+      }
+      const filterdSubscribedPodcasts = user.subscribedPodcasts.filter(
+        podcast => podcast.id !== podcastId,
+      );
+      const subscribeExists =
+        user.subscribedPodcasts.length !== filterdSubscribedPodcasts.length;
+      if (subscribeExists) {
+        user.subscribedPodcasts = filterdSubscribedPodcasts;
+        await this.users.save(user);
+      } else {
+        user.subscribedPodcasts.push(podcast);
+        await this.users.save(user);
+      }
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not subscribe' };
+    }
+  }
+
+  async seeSubscriptions(id: number): Promise<SeeSubscriptionsOutput> {
+    try {
+      const user = await this.users.findOne(id, {
+        relations: ['subscribedPodcasts'],
+      });
+      if (!user) {
+        return { ok: false, error: 'User not found' };
+      }
+      return { ok: true, subscribedPodcasts: user.subscribedPodcasts };
+    } catch (error) {
+      return { ok: false, error: 'Could not see subscription.' };
+    }
+  }
+
+  async markEpisodeAsPlayed(
+    userId,
+    { episodeId }: MarkEpisodeAsPlayedInput,
+  ): Promise<MarkEpisodeAsPlayedOutput> {
+    try {
+      const episode = await this.episodes.findOne(episodeId);
+      if (!episode) {
+        return { ok: false, error: 'episode not found.' };
+      }
+      const user = await this.users.findOne(userId, {
+        relations: ['playedEpisodes'],
+      });
+      if (!user) {
+        return { ok: false, error: 'User not found.' };
+      }
+      user.playedEpisodes.push(episode);
+      await this.users.save(user);
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not mark as played' };
     }
   }
 }

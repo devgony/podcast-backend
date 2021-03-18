@@ -1,4 +1,4 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, PickType, Query, Resolver } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { Role } from 'src/auth/role.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -22,6 +22,14 @@ import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
+import {
+  ReviewPodcastInput,
+  ReviewPodcastOutput,
+} from './dtos/review-podcast.dto';
+import {
+  SearchPodcastsInput,
+  SearchPodcastsOutput,
+} from './dtos/search-podcasts.dto';
 import {
   UpdateEpisodeInput,
   UpdateEpisodeOutput,
@@ -114,5 +122,22 @@ export class PodcastResolver {
     @Args('input') podcastId: number,
   ): Promise<LikePodcastOutput> {
     return this.podcastService.likePodcast({ userId, podcastId });
+  }
+
+  @Query(returns => SearchPodcastsOutput)
+  @Role(['Listener'])
+  searchPodcasts(
+    @Args('input') searchPodcastsInput: SearchPodcastsInput,
+  ): Promise<SearchPodcastsOutput> {
+    return this.podcastService.searchPodcasts(searchPodcastsInput);
+  }
+
+  @Mutation(returns => ReviewPodcastOutput)
+  @Role(['Listener'])
+  reviewPodcastInput(
+    @AuthUser() { id: userId }: User,
+    @Args('input') reviewPodcastInput: ReviewPodcastInput,
+  ): Promise<ReviewPodcastOutput> {
+    return this.podcastService.reviewPodcast(userId, reviewPodcastInput);
   }
 }

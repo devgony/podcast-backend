@@ -11,6 +11,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Episode } from './episode.entity';
+import { PodcastRating } from './podcast-rating.entity';
 
 @InputType('PodcastInputType', { isAbstract: true })
 @ObjectType()
@@ -41,4 +42,7 @@ export class Podcast extends CoreEntity {
   @ManyToMany(type => User, { eager: true })
   @JoinTable()
   likedBy: User[];
+
+  @OneToMany(() => PodcastRating, podcastRating => podcastRating.podcast)
+  podcastRatings!: PodcastRating[];
 }

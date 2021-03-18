@@ -13,6 +13,7 @@ import { JwtModule } from './jwt/jwt.module';
 import { Verification } from './users/entities/verification.entity';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { AuthModule } from './auth/auth.module';
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       synchronize: true,
-      entities: [Podcast, Episode, Verification, User],
+      entities: [Podcast, Episode, Verification, User, PodcastRating],
     }),
     UsersModule,
     JwtModule.forRoot({

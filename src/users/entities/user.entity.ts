@@ -11,10 +11,16 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { InternalServerErrorException } from '@nestjs/common';
 import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
+import { Podcast } from 'src/podcasts/entities/podcast.entity';
+import { Episode } from 'src/podcasts/entities/episode.entity';
+import { PodcastRating } from 'src/podcasts/entities/podcast-rating.entity';
 
 export enum UserRole {
   Host = 'Host',
@@ -47,6 +53,19 @@ export class User extends CoreEntity {
   @Field(types => Boolean)
   @IsBoolean()
   isVerified: boolean;
+
+  @Field(type => [Podcast])
+  @ManyToMany(type => Podcast)
+  @JoinTable()
+  subscribedPodcasts: Podcast[];
+
+  @Field(type => [Episode])
+  @ManyToMany(type => Episode)
+  @JoinTable()
+  playedEpisodes: Episode[];
+
+  @OneToMany(() => PodcastRating, podcastRating => podcastRating.user)
+  podcastRatings!: PodcastRating[];
 
   @BeforeInsert()
   @BeforeUpdate()

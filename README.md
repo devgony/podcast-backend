@@ -38,12 +38,37 @@
 ```
 
 ### ✅ D16: Unit Testing!
+
 - E2E test the users.resolver.ts and podcasts.resolver.ts
 
 ### ✅ D17: Roles!
+
 - New update!: To test Listener role, `likePodcast` resolver is created
 - `likePodcast` can be called `only` by user with `Listener role`
 - `likePodcast` will like the podcast if never been liked, otherwise dislike
+
+### ✅ D18-The Last Resolvers
+
+> #### Protected by Listener Role
+
+> #### Create new resolver
+
+`podcast.resolver.ts`
+
+#### searchPodcasts (by title)
+
+#### reviewPodcast
+
+- Created podcastRating entity with rating column as N:M mapper
+- After updating podcastRating, get average and update rating of the podcast
+
+`user.resolver.ts`
+
+#### subscribeToPodcast
+
+#### seeSubscriptions
+
+#### markEpisodeAsPlayed (like a Netflix movie that has been watched)
 
 ---
 
@@ -68,3 +93,18 @@ const episodes = await this.episodes.find({
   podcast: { id: podcastId },
 });
 ```
+
+### D18-The Last Resolvers
+
+- QueryBuilder sample
+
+```ts
+const subscribedPodcast = await this.users
+  .createQueryBuilder('user')
+  .innerJoin('subscribedPodcast', 'subscribedPodcast')
+  .where('user.id = :userId', { userId })
+  .andWhere('subscribedPodcast.podcastId = :podcastId', { podcastId })
+  .getOne();
+```
+
+- To Handle drop constraint error, set `onDelete: 'cascade'` at `ManyToOne`

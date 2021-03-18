@@ -7,7 +7,16 @@ import {
 } from './dtos/create-account.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import {
+  MarkEpisodeAsPlayedInput,
+  MarkEpisodeAsPlayedOutput,
+} from './dtos/mark-episode-as-played.dto';
 import { SeeProfileInput, SeeProfileOutput } from './dtos/see-profile.dto';
+import { SeeSubscriptionsOutput } from './dtos/see-subscriptions.dto';
+import {
+  SubscribeToPodcastInput,
+  SubscribeToPodcastOutput,
+} from './dtos/subscribe-to-podcast.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -48,5 +57,35 @@ export class UsersResolver {
     @Args('input') editProfileInput: EditProfileInput,
   ): Promise<EditProfileOutput> {
     return this.usersService.editProfile({ id }, editProfileInput);
+  }
+
+  @Mutation(returns => SubscribeToPodcastOutput)
+  @Role(['Listener'])
+  subscribeToPodcast(
+    @AuthUser() { id: userId }: User,
+    @Args('input') subscribeToPodcastInput: SubscribeToPodcastInput,
+  ): Promise<SubscribeToPodcastOutput> {
+    return this.usersService.subscribeToPodcast(
+      userId,
+      subscribeToPodcastInput,
+    );
+  }
+
+  @Query(returns => SeeSubscriptionsOutput)
+  @Role(['Listener'])
+  seeSubscriptions(@AuthUser() { id }: User): Promise<SeeSubscriptionsOutput> {
+    return this.usersService.seeSubscriptions(id);
+  }
+
+  @Mutation(returns => MarkEpisodeAsPlayedOutput)
+  @Role(['Listener'])
+  markEpisodeAsPlayed(
+    @AuthUser() { id: userId }: User,
+    @Args('input') MarkEpisodeAsPlayedInput: MarkEpisodeAsPlayedInput,
+  ): Promise<MarkEpisodeAsPlayedOutput> {
+    return this.usersService.markEpisodeAsPlayed(
+      userId,
+      MarkEpisodeAsPlayedInput,
+    );
   }
 }

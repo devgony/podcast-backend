@@ -22,12 +22,21 @@ import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
+import {
+  ReviewPodcastInput,
+  ReviewPodcastOutput,
+} from './dtos/review-podcast.dto';
+import {
+  SearchPodcastsInput,
+  SearchPodcastsOutput,
+} from './dtos/search-podcasts.dto';
 import { UpdateEpisodeInput } from './dtos/update-episode.dto';
 import {
   UpdatePodcastInput,
   UpdatePodcastOutput,
 } from './dtos/update-podcast.dto';
 import { Episode } from './entities/episode.entity';
+import { PodcastRating } from './entities/podcast-rating.entity';
 import { Podcast } from './entities/podcast.entity';
 
 const DEFAULT_DATA = {
@@ -49,6 +58,8 @@ export class PodcastService {
     @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(PodcastRating)
+    private readonly podcastRatings: Repository<PodcastRating>,
   ) {}
   // private podcasts: Podcast[] = [DEFAULT_DATA];
 
@@ -225,6 +236,57 @@ export class PodcastService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not like/dislike it' };
+    }
+  }
+
+  async searchPodcasts({
+    searchKeyword,
+  }: SearchPodcastsInput): Promise<SearchPodcastsOutput> {
+    try {
+      const [podcasts, count] = await this.podcasts.findAndCount({
+        where: {
+          title: Raw(title => `${title} LIKE '%${searchKeyword}%'`),
+        },
+      });
+      return { ok: true, podcasts, count };
+    } catch (error) {
+      return { ok: false, error: 'Could not search podcast' };
+    }
+  }
+
+  async reviewPodcast(
+    userId: number,
+    { podcastId, rating }: ReviewPodcastInput,
+  ): Promise<ReviewPodcastOutput> {
+    try {
+      const podcast = await this.podcasts.findOne(podcastId);
+      if (!podcast) {
+        return { ok: false, error: 'Podcast not found.' };
+      }
+      const userExists = await this.users.findOne(userId);
+      if (!userExists) {
+        return { ok: false, error: 'User not found.' };
+      }
+      const podcastRating = await this.podcastRatings.findOne({
+        userId,
+        podcastId,
+      });
+      if (podcastRating) {
+        await this.podcastRatings.save({ ...podcastRating, rating });
+      } else {
+        await this.podcastRatings.save({ userId, podcastId, rating });
+      }
+      // update avgRating of the podcast
+      const { avg } = await this.podcastRatings
+        .createQueryBuilder('podcastRating')
+        .select('avg(rating)', 'avg')
+        .where('podcastId = :podcastId', { podcastId })
+        .getRawOne();
+      await this.podcasts.update(podcastId, { rating: avg });
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not review' };
     }
   }
 }
