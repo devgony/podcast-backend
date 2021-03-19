@@ -70,6 +70,17 @@
 
 #### markEpisodeAsPlayed (like a Netflix movie that has been watched)
 
+### ✅ D19-Deploy!
+
+- heroku doesn't support sqlite => if production, use postgres
+- if production, default value of playground is false => manually set true
+
+```
+// app.module.ts
+playground: true,
+introspection: true,
+```
+
 ---
 
 > ## Note
