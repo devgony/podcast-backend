@@ -28,6 +28,7 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
     PodcastModule,
     GraphQLModule.forRoot({
       playground: true,
+      introspection: true,
       autoSchemaFile: true,
       installSubscriptionHandlers: true,
       context: ({ req, connection }) => {
