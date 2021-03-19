@@ -21,7 +21,7 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       validationSchema: Joi.object({
-        NODE_ENV: Joi.string().valid('dev', 'prod', 'test').required(),
+        NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         PRIVATE_KEY: Joi.string().required(),
       }),
     }),
@@ -41,7 +41,7 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
       database: process.env.DATABASE_URL,
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      synchronize: true,
+      synchronize: process.env.NODE_ENV !== 'prod',
       entities: [Podcast, Episode, Verification, User, PodcastRating],
     }),
     UsersModule,
