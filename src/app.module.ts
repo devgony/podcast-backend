@@ -37,8 +37,15 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
       },
     }),
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: process.env.DATABASE_URL,
+      ...(process.env.NODE_ENV === 'prod'
+        ? {
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
+          }
+        : {
+            type: 'sqlite',
+            database: process.env.DATABASE_URL,
+          }),
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
       synchronize: process.env.NODE_ENV !== 'prod',
