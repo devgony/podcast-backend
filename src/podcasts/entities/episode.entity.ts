@@ -18,6 +18,11 @@ export class Episode extends CoreEntity {
   @Column()
   @Field(type => String)
   @IsString()
+  title: string;
+
+  @Column()
+  @Field(type => String)
+  @IsString()
   content: string;
 
   @Field(type => Podcast)

@@ -9,7 +9,10 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 import { Episode } from '../entities/episode.entity';
 
 @InputType()
-export class CreateEpisodeInput extends PickType(Episode, ['content']) {
+export class CreateEpisodeInput extends PickType(Episode, [
+  'title',
+  'content',
+]) {
   @Field(type => Number)
   podcastId: number;
 }
