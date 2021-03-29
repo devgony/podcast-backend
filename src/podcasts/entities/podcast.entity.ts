@@ -34,10 +34,10 @@ export class Podcast extends CoreEntity {
   @Max(5)
   rating: number;
 
-  @Column()
+  @Column({ nullable: true })
   @Field(type => String)
   @IsString()
-  image: string;
+  image?: string;
 
   @Field(type => [Episode])
   @OneToMany(type => Episode, episode => episode.podcast)
