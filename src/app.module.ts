@@ -39,8 +39,9 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
       },
     }),
     TypeOrmModule.forRoot({
-      ...(process.env.NODE_ENV === 'produnction'
-        ? {
+      ...(1 === 1
+        ? // process.env.NODE_ENV === 'produnction'
+          {
             type: 'postgres',
             url: process.env.DATABASE_URL,
           }
