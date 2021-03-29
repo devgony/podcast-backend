@@ -49,9 +49,10 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
             database: process.env.DATABASE_URL,
           }),
       logging:
-        process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
+        process.env.NODE_ENV !== 'production' &&
+        process.env.NODE_ENV !== 'test',
       synchronize: true,
-      // process.env.NODE_ENV !== 'prod',
+      // process.env.NODE_ENV !== 'production',
       entities: [Podcast, Episode, Verification, User, PodcastRating],
     }),
     UsersModule,
