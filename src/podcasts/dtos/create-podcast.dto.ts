@@ -8,6 +8,7 @@ export class CreatePodcastInput extends PickType(Podcast, [
   'title',
   'category',
   'rating',
+  'image',
   // 'episodes',
 ]) {}
 
