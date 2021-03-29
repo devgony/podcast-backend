@@ -39,9 +39,8 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
       },
     }),
     TypeOrmModule.forRoot({
-      ...(1 === 1
-        ? // process.env.NODE_ENV === 'produnction'
-          {
+      ...(process.env.NODE_ENV === 'production'
+        ? {
             type: 'postgres',
             url: process.env.DATABASE_URL,
           }
@@ -51,8 +50,8 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
           }),
       logging:
         process.env.NODE_ENV !== 'prod' && process.env.NODE_ENV !== 'test',
-      synchronize: process.env.NODE_ENV !== 'prod',
-      //synchronize: false,
+      synchronize: true,
+      // process.env.NODE_ENV !== 'prod',
       entities: [Podcast, Episode, Verification, User, PodcastRating],
     }),
     UsersModule,
