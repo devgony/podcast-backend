@@ -35,7 +35,7 @@ export class Podcast extends CoreEntity {
   rating: number;
 
   @Column({ nullable: true })
-  @Field(type => String)
+  @Field(type => String, { nullable: true })
   @IsString()
   image?: string;
 
