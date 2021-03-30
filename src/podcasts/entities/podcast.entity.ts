@@ -39,6 +39,11 @@ export class Podcast extends CoreEntity {
   @IsString()
   image?: string;
 
+  @Column({ nullable: true })
+  @Field(type => String, { nullable: true })
+  @IsString()
+  intro?: string;
+
   @Field(type => [Episode])
   @OneToMany(type => Episode, episode => episode.podcast)
   episodes: Episode[];

@@ -20,6 +20,10 @@ import {
 } from './dtos/delete-podcast.dto';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
+import {
+  GetPodcastsByCategoryInput,
+  GetPodcastsByCategoryOutput,
+} from './dtos/get-podcasts-by-category';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
 import {
@@ -139,5 +143,15 @@ export class PodcastResolver {
     @Args('input') reviewPodcastInput: ReviewPodcastInput,
   ): Promise<ReviewPodcastOutput> {
     return this.podcastService.reviewPodcast(userId, reviewPodcastInput);
+  }
+
+  @Query(returns => GetPodcastsByCategoryOutput)
+  @Role(['Host'])
+  getPodcastsByCategory(
+    @Args('input') getPodcastsByCategoryInput: GetPodcastsByCategoryInput,
+  ): Promise<GetPodcastsByCategoryOutput> {
+    return this.podcastService.getPodcastsByCategory(
+      getPodcastsByCategoryInput,
+    );
   }
 }

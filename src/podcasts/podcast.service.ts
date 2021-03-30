@@ -20,6 +20,10 @@ import {
 } from './dtos/delete-podcast.dto';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
+import {
+  GetPodcastsByCategoryInput,
+  GetPodcastsByCategoryOutput,
+} from './dtos/get-podcasts-by-category';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
 import {
@@ -287,6 +291,17 @@ export class PodcastService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not review' };
+    }
+  }
+
+  async getPodcastsByCategory({
+    category,
+  }: GetPodcastsByCategoryInput): Promise<GetPodcastsByCategoryOutput> {
+    try {
+      const podcasts = await this.podcasts.find({ category });
+      return { ok: true, podcasts };
+    } catch (error) {
+      return { ok: false, error: 'Could not get Podcast by category' };
     }
   }
 }
