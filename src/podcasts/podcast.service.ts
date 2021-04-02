@@ -148,7 +148,8 @@ export class PodcastService {
   }: GetEpisodesInput): Promise<GetEpisodesOutput> {
     try {
       const episodes = await this.episodes.find({
-        podcast: { id: podcastId },
+        where: { podcast: { id: podcastId } },
+        relations: ['podcast'],
       });
       if (!episodes) {
         return { ok: false, error: 'Not found. wrong poadcast id' };
