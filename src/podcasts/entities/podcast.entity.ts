@@ -7,9 +7,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Category } from './category.entity';
 import { Episode } from './episode.entity';
 import { PodcastRating } from './podcast-rating.entity';
 
@@ -22,10 +24,19 @@ export class Podcast extends CoreEntity {
   @IsString()
   title: string;
 
-  @Column()
-  @Field(type => String)
-  @IsString()
-  category: string;
+  @Field(type => Category, { nullable: true })
+  @ManyToOne(type => Category, category => category.podcasts, {
+    nullable: true,
+    onDelete: 'SET NULL',
+    eager: true,
+  })
+  category?: Category;
+
+  @Field(type => User)
+  @ManyToOne(type => User, user => user.podcasts, {
+    onDelete: 'CASCADE',
+  })
+  owner: User;
 
   @Column({ default: 0 })
   @Field(type => Number)

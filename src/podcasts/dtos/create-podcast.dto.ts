@@ -6,11 +6,13 @@ import { Podcast } from '../entities/podcast.entity';
 @InputType()
 export class CreatePodcastInput extends PickType(Podcast, [
   'title',
-  'category',
   'rating',
   'image',
-  // 'episodes',
-]) {}
+  'intro',
+]) {
+  @Field(type => String)
+  categoryName: string;
+}
 
 @ObjectType()
 export class CreatePodcastOutput extends CoreOutput {

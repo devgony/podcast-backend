@@ -58,9 +58,10 @@ export class PodcastResolver {
   @Mutation(returns => CreatePodcastOutput)
   @Role(['Host'])
   createPodcast(
+    @AuthUser() authUser: User,
     @Args('input') createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
-    return this.podcastService.createPodcast(createPodcastInput);
+    return this.podcastService.createPodcast(authUser, createPodcastInput);
   }
 
   @Query(returns => GetPodcastOutput)
@@ -146,7 +147,7 @@ export class PodcastResolver {
   }
 
   @Query(returns => GetPodcastsByCategoryOutput)
-  @Role(['Host'])
+  @Role(['Any'])
   getPodcastsByCategory(
     @Args('input') getPodcastsByCategoryInput: GetPodcastsByCategoryInput,
   ): Promise<GetPodcastsByCategoryOutput> {
@@ -154,4 +155,10 @@ export class PodcastResolver {
       getPodcastsByCategoryInput,
     );
   }
+
+  // @Query(returns => GetCategoriesOutput)
+  // @Role(['Any'])
+  // getCategories(): Promise<GetCategoriesOutput> {
+  //   return this.podcastService.getCategories();
+  // }
 }

@@ -14,6 +14,7 @@ import { Verification } from './users/entities/verification.entity';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
+import { Category } from './podcasts/entities/category.entity';
 
 @Module({
   imports: [
@@ -45,15 +46,15 @@ import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
             url: process.env.DATABASE_URL,
           }
         : {
-            type: 'sqlite',
-            database: process.env.DATABASE_URL,
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
           }),
       logging:
         process.env.NODE_ENV !== 'production' &&
         process.env.NODE_ENV !== 'test',
       synchronize: true,
       // process.env.NODE_ENV !== 'production',
-      entities: [Podcast, Episode, Verification, User, PodcastRating],
+      entities: [Podcast, Episode, Verification, User, PodcastRating, Category],
     }),
     UsersModule,
     JwtModule.forRoot({

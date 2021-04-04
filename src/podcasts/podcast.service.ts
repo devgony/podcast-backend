@@ -39,9 +39,11 @@ import {
   UpdatePodcastInput,
   UpdatePodcastOutput,
 } from './dtos/update-podcast.dto';
+import { Category } from './entities/category.entity';
 import { Episode } from './entities/episode.entity';
 import { PodcastRating } from './entities/podcast-rating.entity';
 import { Podcast } from './entities/podcast.entity';
+import { CategoryRepository } from './repositories/category.repository';
 
 const DEFAULT_DATA = {
   id: 1614785562236,
@@ -62,6 +64,7 @@ export class PodcastService {
     @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
     @InjectRepository(User) private readonly users: Repository<User>,
+    private readonly categories: CategoryRepository,
     @InjectRepository(PodcastRating)
     private readonly podcastRatings: Repository<PodcastRating>,
   ) {}
@@ -80,18 +83,26 @@ export class PodcastService {
   }
 
   async createPodcast(
+    owner: User,
     createPodcastInput: CreatePodcastInput,
   ): Promise<CreatePodcastOutput> {
     try {
-      const podcastExists = await this.podcasts.findOne({
-        title: createPodcastInput.title,
-      });
-      if (podcastExists) {
-        return { ok: false, error: 'podcast with that title already exists' };
-      }
-      await this.podcasts.save(this.podcasts.create(createPodcastInput));
+      // const podcastExists = await this.podcasts.findOne({
+      //   title: createPodcastInput.title,
+      // });
+      // if (podcastExists) {
+      //   return { ok: false, error: 'podcast with that title already exists' };
+      // }
+      const newPodcast = this.podcasts.create(createPodcastInput);
+      const category = await this.categories.getOrCreate(
+        createPodcastInput.categoryName,
+      );
+      newPodcast.category = category;
+      newPodcast.owner = owner;
+      await this.podcasts.save(newPodcast);
       return { ok: true };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Could not create podcast' };
     }
   }
@@ -296,12 +307,22 @@ export class PodcastService {
   }
 
   async getPodcastsByCategory({
-    category,
+    slug,
   }: GetPodcastsByCategoryInput): Promise<GetPodcastsByCategoryOutput> {
+    console.log(slug);
     try {
-      const podcasts = await this.podcasts.find({ category });
+      const category = await this.categories.findOne({
+        where: { slug },
+      });
+      // relations: ['category'],
+      const podcasts = await this.podcasts.find({
+        take: 20,
+        where: { category },
+        relations: ['category'],
+      });
       return { ok: true, podcasts };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Could not get Podcast by category' };
     }
   }

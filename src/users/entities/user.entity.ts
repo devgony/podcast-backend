@@ -67,6 +67,9 @@ export class User extends CoreEntity {
   @OneToMany(() => PodcastRating, podcastRating => podcastRating.user)
   podcastRatings!: PodcastRating[];
 
+  @OneToMany(() => Podcast, podcast => podcast.owner)
+  podcasts!: Podcast[];
+
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword(): Promise<void> {
