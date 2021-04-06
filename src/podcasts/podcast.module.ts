@@ -17,6 +17,7 @@ import { CategoryRepository } from './repositories/category.repository';
       Episode,
       User,
       PodcastRating,
+      Category,
       CategoryRepository,
     ]),
   ],

@@ -18,6 +18,7 @@ import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
+import { GetCategoriesOutput } from './dtos/get-categories';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import {
@@ -161,4 +162,10 @@ export class PodcastResolver {
   // getCategories(): Promise<GetCategoriesOutput> {
   //   return this.podcastService.getCategories();
   // }
+
+  @Query(returns => GetCategoriesOutput)
+  @Role(['Any'])
+  getCategories(): Promise<GetCategoriesOutput> {
+    return this.podcastService.getCategories();
+  }
 }
