@@ -18,13 +18,14 @@ import {
   DeletePodcastInput,
   DeletePodcastOutput,
 } from './dtos/delete-podcast.dto';
-import { GetCategoriesOutput } from './dtos/get-categories';
+import { GetCategoriesOutput } from './dtos/get-categories.dto';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
+import { GetMyPodcastsOutput } from './dtos/get-my-podcasts.dto';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import {
   GetPodcastsByCategoryInput,
   GetPodcastsByCategoryOutput,
-} from './dtos/get-podcasts-by-category';
+} from './dtos/get-podcasts-by-category.dto';
 import { GetPodcastsOutput } from './dtos/get-podcasts.dto';
 import { LikePodcastInput, LikePodcastOutput } from './dtos/like-podcast.dto';
 import {
@@ -335,6 +336,16 @@ export class PodcastService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: "Can't get categories" };
+    }
+  }
+
+  async getMypodcasts({ id }: User): Promise<GetMyPodcastsOutput> {
+    try {
+      const podcasts = await this.podcasts.find({ where: { owner: id } });
+      return { ok: true, podcasts };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: "Can't get Podcasts" };
     }
   }
 }

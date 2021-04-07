@@ -12,6 +12,7 @@ import { Episode } from '../entities/episode.entity';
 export class CreateEpisodeInput extends PickType(Episode, [
   'title',
   'content',
+  'audio',
 ]) {
   @Field(type => Number)
   podcastId: number;

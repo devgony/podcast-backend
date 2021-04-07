@@ -5,6 +5,10 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
+import {
+  DidISubscribeInput,
+  DidISubscribeOutput,
+} from './dtos/did-I-subscribe.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
@@ -60,7 +64,7 @@ export class UsersResolver {
   }
 
   @Mutation(returns => SubscribeToPodcastOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   subscribeToPodcast(
     @AuthUser() { id: userId }: User,
     @Args('input') subscribeToPodcastInput: SubscribeToPodcastInput,
@@ -87,5 +91,14 @@ export class UsersResolver {
       userId,
       MarkEpisodeAsPlayedInput,
     );
+  }
+
+  @Query(returns => DidISubscribeOutput)
+  @Role(['Any'])
+  didISubscribe(
+    @AuthUser() { id }: User,
+    @Args('input') didISubscribeInput: DidISubscribeInput,
+  ): Promise<DidISubscribeOutput> {
+    return this.usersService.didISubscribe(id, didISubscribeInput);
   }
 }

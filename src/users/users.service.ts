@@ -9,6 +9,10 @@ import {
   CreateAccountInput,
   CreateAccountOutput,
 } from './dtos/create-account.dto';
+import {
+  DidISubscribeInput,
+  DidISubscribeOutput,
+} from './dtos/did-I-subscribe.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
@@ -194,6 +198,22 @@ export class UsersService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not mark as played' };
+    }
+  }
+
+  async didISubscribe(
+    id: number,
+    podcastId: DidISubscribeInput,
+  ): Promise<DidISubscribeOutput> {
+    try {
+      const user = await this.users.findOne(id, {
+        relations: ['subscribedPodcasts'],
+        // where: { subscribedPodcasts: { podcastId } },
+      });
+      return { ok: true, userSubcribed: Boolean(user) };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not check whether subscribe or not' };
     }
   }
 }

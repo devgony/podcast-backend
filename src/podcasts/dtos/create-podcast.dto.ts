@@ -6,7 +6,6 @@ import { Podcast } from '../entities/podcast.entity';
 @InputType()
 export class CreatePodcastInput extends PickType(Podcast, [
   'title',
-  'rating',
   'image',
   'intro',
 ]) {
