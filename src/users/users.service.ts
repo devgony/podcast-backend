@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { JwtService } from 'src/jwt/jwt.service';
 import { Episode } from 'src/podcasts/entities/episode.entity';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
-import { Repository } from 'typeorm';
+import { Connection, getConnection, Repository } from 'typeorm';
 import {
   CreateAccountInput,
   CreateAccountOutput,
@@ -38,6 +38,7 @@ export class UsersService {
     @InjectRepository(Verification)
     private readonly verifications: Repository<Verification>,
     private readonly jwtService: JwtService,
+    private connection: Connection,
   ) {}
 
   async createAccount({
@@ -141,6 +142,7 @@ export class UsersService {
       const user = await this.users.findOne(userId, {
         relations: ['subscribedPodcasts'],
       });
+      console.log(user);
       if (!user) {
         return { ok: false, error: 'User not found.' };
       }
@@ -163,16 +165,27 @@ export class UsersService {
     }
   }
 
-  async seeSubscriptions(id: number): Promise<SeeSubscriptionsOutput> {
+  async seeSubscriptions(userId: number): Promise<SeeSubscriptionsOutput> {
     try {
-      const user = await this.users.findOne(id, {
-        relations: ['subscribedPodcasts'],
-      });
-      if (!user) {
-        return { ok: false, error: 'User not found' };
+      // const user = await this.users.findOne(id, {
+      //   relations: ['subscribedPodcasts'],
+      // });
+      const subscribedPodcasts = await this.podcasts
+        .createQueryBuilder('P')
+        .innerJoin(
+          'user_subscribed_podcasts_podcast',
+          'M',
+          'P.id = "M"."podcastId"',
+        )
+        .where('"M"."userId" = :userId', { userId })
+        .getMany();
+      console.log('log:', subscribedPodcasts);
+      if (!subscribedPodcasts) {
+        return { ok: false, error: 'subscribedPodcasts not found' };
       }
-      return { ok: true, subscribedPodcasts: user.subscribedPodcasts };
+      return { ok: true, subscribedPodcasts };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Could not see subscription.' };
     }
   }
@@ -202,15 +215,27 @@ export class UsersService {
   }
 
   async didISubscribe(
-    id: number,
-    podcastId: DidISubscribeInput,
+    userId: number,
+    { podcastId }: DidISubscribeInput,
   ): Promise<DidISubscribeOutput> {
     try {
-      const user = await this.users.findOne(id, {
-        relations: ['subscribedPodcasts'],
-        // where: { subscribedPodcasts: { podcastId } },
-      });
-      return { ok: true, userSubcribed: Boolean(user) };
+      // const subscribedUser = await this.users
+      //   .createQueryBuilder('user')
+      //   .innerJoin(
+      //     'user_subscribed_podcasts_podcast',
+      //     'subscribedPodcast',
+      //     'user.id = :userId',
+      //     { userId },
+      //   )
+      //   .andWhere('subscribedPodcast.podcastId = :podcastId', { podcastId })
+      //   .getOne();
+      const userSubscribed = await getConnection()
+        .createQueryBuilder('user_subscribed_podcasts_podcast', 'A')
+        // .select('count(*)')
+        .where('"userId" = :userId', { userId })
+        .andWhere('"podcastId" = :podcastId', { podcastId })
+        .getRawOne();
+      return { ok: true, userSubcribed: Boolean(userSubscribed) };
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not check whether subscribe or not' };

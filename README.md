@@ -110,10 +110,14 @@ const episodes = await this.episodes.find({
 - QueryBuilder sample
 
 ```ts
-const subscribedPodcast = await this.users
+const subscribedUser = await this.users
   .createQueryBuilder('user')
-  .innerJoin('subscribedPodcast', 'subscribedPodcast')
-  .where('user.id = :userId', { userId })
+  .innerJoin(
+    'user_subscribed_podcasts_podcast',
+    'subscribedPodcast',
+    'user.id = :userId',
+    { userId },
+  )
   .andWhere('subscribedPodcast.podcastId = :podcastId', { podcastId })
   .getOne();
 ```

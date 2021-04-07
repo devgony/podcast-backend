@@ -10,7 +10,9 @@ export class SearchPodcastsInput {
 
 @ObjectType()
 export class SearchPodcastsOutput extends CoreOutput {
+  @Field(type => Number)
+  count?: number;
+
   @Field(type => [Podcast])
   podcasts?: Podcast[];
-  count?: number;
 }

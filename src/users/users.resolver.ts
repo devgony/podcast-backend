@@ -76,7 +76,7 @@ export class UsersResolver {
   }
 
   @Query(returns => SeeSubscriptionsOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   seeSubscriptions(@AuthUser() { id }: User): Promise<SeeSubscriptionsOutput> {
     return this.usersService.seeSubscriptions(id);
   }

@@ -132,7 +132,7 @@ export class PodcastResolver {
   }
 
   @Query(returns => SearchPodcastsOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   searchPodcasts(
     @Args('input') searchPodcastsInput: SearchPodcastsInput,
   ): Promise<SearchPodcastsOutput> {

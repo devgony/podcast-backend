@@ -263,7 +263,9 @@ export class PodcastService {
     try {
       const [podcasts, count] = await this.podcasts.findAndCount({
         where: {
-          title: Raw(title => `${title} LIKE '%${searchKeyword}%'`),
+          title: Raw(
+            title => `upper(${title}) LIKE '%${searchKeyword.toUpperCase()}%'`,
+          ),
         },
       });
       return { ok: true, podcasts, count };
