@@ -179,7 +179,6 @@ export class UsersService {
         )
         .where('"M"."userId" = :userId', { userId })
         .getMany();
-      console.log('log:', subscribedPodcasts);
       if (!subscribedPodcasts) {
         return { ok: false, error: 'subscribedPodcasts not found' };
       }

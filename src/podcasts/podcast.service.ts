@@ -122,6 +122,7 @@ export class PodcastService {
           error: 'Podcast not found',
         };
       }
+      console.log(':+:+:+:+:+:+:+:+:+:+', podcast.rating);
       return { ok: true, podcast };
     } catch (error) {
       return { ok: false, error: 'Could not get podcast' };
@@ -268,11 +269,12 @@ export class PodcastService {
           title: Raw(
             title => `upper(${title}) LIKE '%${searchKeyword.toUpperCase()}%'`,
           ),
-          order: { updatedAt: 'ASC' },
         },
+        order: { updatedAt: 'ASC' },
       });
       return { ok: true, podcasts, count };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Could not search podcast' };
     }
   }
@@ -302,9 +304,11 @@ export class PodcastService {
       // update avgRating of the podcast
       const { avg } = await this.podcastRatings
         .createQueryBuilder('podcastRating')
-        .select('avg(rating)', 'avg')
-        .where('podcastId = :podcastId', { podcastId })
+        // .select('round(cast(avg(rating) as numeric), 1)', 'avg')
+        .select('round(avg(rating), 1)', 'avg')
+        .where('"podcastId" = :podcastId', { podcastId })
         .getRawOne();
+      console.log(avg);
       await this.podcasts.update(podcastId, { rating: avg });
       return { ok: true };
     } catch (error) {
@@ -316,7 +320,6 @@ export class PodcastService {
   async getPodcastsByCategory({
     slug,
   }: GetPodcastsByCategoryInput): Promise<GetPodcastsByCategoryOutput> {
-    console.log(slug);
     try {
       const category = await this.categories.findOne({
         where: { slug },

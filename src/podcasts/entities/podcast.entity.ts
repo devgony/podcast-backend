@@ -1,5 +1,6 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
-import { IsNumber, IsString, Max, Min } from 'class-validator';
+import { Field, Float, InputType, ObjectType } from '@nestjs/graphql';
+import { IsDecimal, IsNumber, IsString, Max, Min } from 'class-validator';
+import { GraphQLFloat } from 'graphql';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
@@ -38,9 +39,10 @@ export class Podcast extends CoreEntity {
   })
   owner: User;
 
-  @Column({ default: 0 })
-  @Field(type => Number)
-  @IsNumber()
+  @Column({ type: 'numeric', precision: 2, scale: 1, default: 0 })
+  // @Column({ type: 'float8', default: 0.0 })
+  @Field(type => Float)
+  @IsDecimal()
   @Min(0)
   @Max(5)
   rating: number;
