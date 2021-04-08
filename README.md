@@ -123,3 +123,5 @@ const subscribedUser = await this.users
 ```
 
 - To Handle drop constraint error, set `onDelete: 'cascade'` at `ManyToOne`
+
+-
