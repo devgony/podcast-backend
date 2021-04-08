@@ -74,7 +74,9 @@ export class PodcastService {
 
   async getPodcasts(): Promise<GetPodcastsOutput> {
     try {
-      const podcasts = await this.podcasts.find();
+      const podcasts = await this.podcasts.find({
+        order: { updatedAt: 'DESC' },
+      });
       return {
         ok: true,
         podcasts,
@@ -266,6 +268,7 @@ export class PodcastService {
           title: Raw(
             title => `upper(${title}) LIKE '%${searchKeyword.toUpperCase()}%'`,
           ),
+          order: { updatedAt: 'ASC' },
         },
       });
       return { ok: true, podcasts, count };
@@ -323,6 +326,7 @@ export class PodcastService {
         take: 20,
         where: { category },
         relations: ['category'],
+        order: { updatedAt: 'DESC' },
       });
       return { ok: true, podcasts };
     } catch (error) {
@@ -343,7 +347,10 @@ export class PodcastService {
 
   async getMypodcasts({ id }: User): Promise<GetMyPodcastsOutput> {
     try {
-      const podcasts = await this.podcasts.find({ where: { owner: id } });
+      const podcasts = await this.podcasts.find({
+        where: { owner: id },
+        order: { updatedAt: 'DESC' },
+      });
       return { ok: true, podcasts };
     } catch (error) {
       console.log(error);

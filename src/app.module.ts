@@ -15,15 +15,19 @@ import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
 import { Category } from './podcasts/entities/category.entity';
+import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'dev' ? '.env.dev' : '.env.test',
       ignoreEnvFile: process.env.NODE_ENV === 'production',
       validationSchema: Joi.object({
         NODE_ENV: Joi.string().valid('dev', 'production', 'test').required(),
         PRIVATE_KEY: Joi.string().required(),
+        AWS_ACCESS_KEY_ID: Joi.string().required(),
+        AWS_SECRET_ACCESS_KEY: Joi.string().required(),
       }),
     }),
     PodcastModule,
@@ -61,6 +65,7 @@ import { Category } from './podcasts/entities/category.entity';
       privateKey: process.env.PRIVATE_KEY,
     }),
     AuthModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
