@@ -45,6 +45,7 @@ import {
   UpdatePodcastInput,
   UpdatePodcastOutput,
 } from './dtos/update-podcast.dto';
+import { WriteCommentInput, WriteCommentOutput } from './dtos/write-comment';
 import { Podcast } from './entities/podcast.entity';
 import { PodcastService } from './podcast.service';
 
@@ -78,17 +79,19 @@ export class PodcastResolver {
   @Mutation(returns => UpdatePodcastOutput)
   @Role(['Host'])
   updatePodcast(
+    @AuthUser() owner: User,
     @Args('input') updatePodcastInput: UpdatePodcastInput,
   ): Promise<UpdatePodcastOutput> {
-    return this.podcastService.updatePodcast(updatePodcastInput);
+    return this.podcastService.updatePodcast(owner, updatePodcastInput);
   }
 
   @Mutation(returns => DeletePodcastOutput)
   @Role(['Host'])
   deletePodcast(
+    @AuthUser() owner: User,
     @Args('input') deletePodcastInput: DeletePodcastInput,
   ): Promise<DeletePodcastOutput> {
-    return this.podcastService.deletePodcast(deletePodcastInput);
+    return this.podcastService.deletePodcast(owner, deletePodcastInput);
   }
 
   @Query(returns => GetEpisodesOutput)
@@ -141,7 +144,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => ReviewPodcastOutput)
-  @Role(['Any'])
+  @Role(['Listener'])
   reviewPodcast(
     @AuthUser() { id: userId }: User,
     @Args('input') reviewPodcastInput: ReviewPodcastInput,
@@ -184,5 +187,14 @@ export class PodcastResolver {
     @Args('input') getMyRatingInput: GetMyRatingInput,
   ): Promise<GetMyRatingOutput> {
     return this.podcastService.getMyRating(id, getMyRatingInput);
+  }
+
+  @Mutation(returns => WriteCommentOutput)
+  @Role(['Listener'])
+  writeComment(
+    @AuthUser() { id }: User,
+    @Args('input') writeCommentInput: WriteCommentInput,
+  ): Promise<WriteCommentOutput> {
+    return this.podcastService.writeComment(id, writeCommentInput);
   }
 }

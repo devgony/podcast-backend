@@ -42,7 +42,9 @@ import {
   UpdatePodcastInput,
   UpdatePodcastOutput,
 } from './dtos/update-podcast.dto';
+import { WriteCommentInput, WriteCommentOutput } from './dtos/write-comment';
 import { Category } from './entities/category.entity';
+import { Comment } from './entities/comment.entity';
 import { Episode } from './entities/episode.entity';
 import { PodcastRating } from './entities/podcast-rating.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -67,6 +69,7 @@ export class PodcastService {
     @InjectRepository(Podcast) private readonly podcasts: Repository<Podcast>,
     @InjectRepository(Episode) private readonly episodes: Repository<Episode>,
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Comment) private readonly comments: Repository<Comment>,
     private readonly categories: CategoryRepository,
     @InjectRepository(PodcastRating)
     private readonly podcastRatings: Repository<PodcastRating>,
@@ -115,7 +118,7 @@ export class PodcastService {
   async getPodcast({ id }: GetPodcastInput): Promise<GetPodcastOutput> {
     try {
       const podcast = await this.podcasts.findOne(id, {
-        relations: ['episodes'],
+        relations: ['episodes', 'owner'],
       });
       if (!podcast) {
         return {
@@ -131,12 +134,15 @@ export class PodcastService {
   }
 
   async updatePodcast(
+    owner: User,
     updatePodcastInput: UpdatePodcastInput,
   ): Promise<UpdatePodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(updatePodcastInput.id);
+      const podcast = await this.podcasts.findOne(updatePodcastInput.id, {
+        where: { owner },
+      });
       if (!podcast) {
-        return { ok: false, error: 'Podcast not found' };
+        return { ok: false, error: 'Podcast not found or You are not owner' };
       }
       await this.podcasts.save([updatePodcastInput]);
       return { ok: true };
@@ -145,13 +151,14 @@ export class PodcastService {
     }
   }
 
-  async deletePodcast({
-    id,
-  }: DeletePodcastInput): Promise<DeletePodcastOutput> {
+  async deletePodcast(
+    owner: User,
+    { id }: DeletePodcastInput,
+  ): Promise<DeletePodcastOutput> {
     try {
-      const podcast = await this.podcasts.findOne(id);
+      const podcast = await this.podcasts.findOne(id, { where: { owner } });
       if (!podcast) {
-        return { ok: false, error: 'Podcast not found' };
+        return { ok: false, error: 'Podcast not found or you are not owner' };
       }
       await this.podcasts.delete(id);
       return { ok: true };
@@ -166,7 +173,8 @@ export class PodcastService {
     try {
       const episodes = await this.episodes.find({
         where: { podcast: { id: podcastId } },
-        relations: ['podcast'],
+        // relations: ['podcast'],
+        order: { updatedAt: 'DESC' },
       });
       if (!episodes) {
         return { ok: false, error: 'Not found. wrong poadcast id' };
@@ -214,9 +222,14 @@ export class PodcastService {
       if (!episode) {
         return { ok: false, error: 'Episode not found' };
       }
+      // await this.episodes.update(
+      //   { id: updateEpisodeInput.id },
+      //   { ...updateEpisodeInput },
+      // );
       await this.episodes.save([{ ...updateEpisodeInput }]);
       return { ok: true };
     } catch (error) {
+      console.log(error);
       return { ok: false, error: 'Could not update episode' };
     }
   }
@@ -379,6 +392,19 @@ export class PodcastService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not get my rating' };
+    }
+  }
+
+  async writeComment(
+    userId: number,
+    writeCommentInput: WriteCommentInput,
+  ): Promise<WriteCommentOutput> {
+    try {
+      await this.comments.insert({ userId, ...writeCommentInput });
+      return { ok: true };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not write comment' };
     }
   }
 }

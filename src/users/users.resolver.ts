@@ -10,6 +10,7 @@ import {
   DidISubscribeOutput,
 } from './dtos/did-I-subscribe.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { GetMyListenersOutput } from './dtos/get-my-listeners';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   MarkEpisodeAsPlayedInput,
@@ -64,7 +65,7 @@ export class UsersResolver {
   }
 
   @Mutation(returns => SubscribeToPodcastOutput)
-  @Role(['Any'])
+  @Role(['Listener'])
   subscribeToPodcast(
     @AuthUser() { id: userId }: User,
     @Args('input') subscribeToPodcastInput: SubscribeToPodcastInput,
@@ -76,7 +77,7 @@ export class UsersResolver {
   }
 
   @Query(returns => SeeSubscriptionsOutput)
-  @Role(['Any'])
+  @Role(['Listener'])
   seeSubscriptions(@AuthUser() { id }: User): Promise<SeeSubscriptionsOutput> {
     return this.usersService.seeSubscriptions(id);
   }
@@ -94,11 +95,17 @@ export class UsersResolver {
   }
 
   @Query(returns => DidISubscribeOutput)
-  @Role(['Any'])
+  @Role(['Listener'])
   didISubscribe(
     @AuthUser() { id }: User,
     @Args('input') didISubscribeInput: DidISubscribeInput,
   ): Promise<DidISubscribeOutput> {
     return this.usersService.didISubscribe(id, didISubscribeInput);
+  }
+
+  @Query(returns => GetMyListenersOutput)
+  @Role(['Host'])
+  getMyListeners(@AuthUser() owner: User): Promise<GetMyListenersOutput> {
+    return this.usersService.getMyListeners(owner);
   }
 }

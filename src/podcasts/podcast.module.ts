@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Category } from './entities/category.entity';
+import { Comment } from './entities/comment.entity';
 import { Episode } from './entities/episode.entity';
 import { PodcastRating } from './entities/podcast-rating.entity';
 import { Podcast } from './entities/podcast.entity';
@@ -19,6 +20,7 @@ import { CategoryRepository } from './repositories/category.repository';
       PodcastRating,
       Category,
       CategoryRepository,
+      Comment,
     ]),
   ],
   providers: [PodcastService, PodcastResolver],

@@ -16,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
 import { PodcastRating } from './podcasts/entities/podcast-rating.entity';
 import { Category } from './podcasts/entities/category.entity';
 import { UploadsModule } from './uploads/uploads.module';
+import { Comment } from './podcasts/entities/comment.entity';
 
 @Module({
   imports: [
@@ -58,7 +59,15 @@ import { UploadsModule } from './uploads/uploads.module';
         process.env.NODE_ENV !== 'test',
       synchronize: true,
       // process.env.NODE_ENV !== 'production',
-      entities: [Podcast, Episode, Verification, User, PodcastRating, Category],
+      entities: [
+        Podcast,
+        Episode,
+        Verification,
+        User,
+        PodcastRating,
+        Category,
+        Comment,
+      ],
     }),
     UsersModule,
     JwtModule.forRoot({

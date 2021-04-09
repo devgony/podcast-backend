@@ -25,10 +25,9 @@ export class Episode extends CoreEntity {
   @IsString()
   content: string;
 
-  @Column()
-  @Field(type => String)
-  @IsString()
-  audio: string;
+  @Column({ nullable: true })
+  @Field(type => String, { nullable: true })
+  audio?: string;
 
   @Field(type => Podcast)
   @ManyToOne(type => Podcast, podcast => podcast.episodes, {

@@ -13,6 +13,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Category } from './category.entity';
+import { Comment } from './comment.entity';
 import { Episode } from './episode.entity';
 import { PodcastRating } from './podcast-rating.entity';
 
@@ -68,4 +69,7 @@ export class Podcast extends CoreEntity {
 
   @OneToMany(() => PodcastRating, podcastRating => podcastRating.podcast)
   podcastRatings!: PodcastRating[];
+
+  @OneToMany(() => Comment, comment => comment.podcast)
+  comments!: Comment[];
 }

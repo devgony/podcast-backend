@@ -14,6 +14,7 @@ import {
   DidISubscribeOutput,
 } from './dtos/did-I-subscribe.dto';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
+import { GetMyListenersOutput } from './dtos/get-my-listeners';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import {
   MarkEpisodeAsPlayedInput,
@@ -240,6 +241,24 @@ export class UsersService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: 'Could not check whether subscribe or not' };
+    }
+  }
+
+  async getMyListeners({ id }: User): Promise<GetMyListenersOutput> {
+    try {
+      const reviewInfos = await getConnection()
+        .createQueryBuilder('user', 'u')
+        .select('u.email, p.title, pr.rating')
+        .innerJoin('podcast_rating', 'pr', 'u.id = pr."userId"')
+        .innerJoin('podcast', 'p', 'pr."podcastId" = p.id')
+        .where('p."ownerId" = :id', { id })
+        .orderBy('pr."ratingId"', 'ASC')
+        .getRawMany();
+      console.log(reviewInfos);
+      // const listeners = await this.users.find();
+      return { ok: true, reviewInfos };
+    } catch (error) {
+      console.log(error);
     }
   }
 }

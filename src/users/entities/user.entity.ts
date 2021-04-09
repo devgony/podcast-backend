@@ -21,6 +21,7 @@ import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator';
 import { Podcast } from 'src/podcasts/entities/podcast.entity';
 import { Episode } from 'src/podcasts/entities/episode.entity';
 import { PodcastRating } from 'src/podcasts/entities/podcast-rating.entity';
+import { Comment } from 'src/podcasts/entities/comment.entity';
 
 export enum UserRole {
   Host = 'Host',
@@ -69,6 +70,9 @@ export class User extends CoreEntity {
 
   @OneToMany(() => Podcast, podcast => podcast.owner)
   podcasts!: Podcast[];
+
+  @OneToMany(() => Comment, comment => comment.user)
+  comments!: Comment[];
 
   @BeforeInsert()
   @BeforeUpdate()
