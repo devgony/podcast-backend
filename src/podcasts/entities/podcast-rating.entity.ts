@@ -1,8 +1,10 @@
-import { Float, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, Float, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { User } from 'src/users/entities/user.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Podcast } from './podcast.entity';
 
+@InputType('PodcastRatingInputType', { isAbstract: true })
+@ObjectType()
 @Entity()
 export class PodcastRating {
   @PrimaryGeneratedColumn()
@@ -11,6 +13,7 @@ export class PodcastRating {
   @Column()
   userId!: number;
 
+  @Field(type => Int)
   @Column()
   podcastId!: number;
 

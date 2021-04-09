@@ -21,6 +21,7 @@ import {
 import { GetCategoriesOutput } from './dtos/get-categories.dto';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetMyPodcastsOutput } from './dtos/get-my-podcasts.dto';
+import { GetMyRatingInput, GetMyRatingOutput } from './dtos/get-my-rating';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import {
   GetPodcastsByCategoryInput,
@@ -358,6 +359,26 @@ export class PodcastService {
     } catch (error) {
       console.log(error);
       return { ok: false, error: "Can't get Podcasts" };
+    }
+  }
+
+  async getMyRating(
+    userId: number,
+    { podcastId }: GetMyRatingInput,
+  ): Promise<GetMyRatingOutput> {
+    try {
+      const podcastRatings = await this.podcastRatings.findOne({
+        userId,
+        podcastId,
+      });
+      console.log('----------', podcastRatings);
+      if (!podcastRatings) {
+        return { ok: true, rating: 0 };
+      }
+      return { ok: true, rating: podcastRatings.rating };
+    } catch (error) {
+      console.log(error);
+      return { ok: false, error: 'Could not get my rating' };
     }
   }
 }

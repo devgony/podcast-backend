@@ -167,18 +167,20 @@ export class UsersService {
 
   async seeSubscriptions(userId: number): Promise<SeeSubscriptionsOutput> {
     try {
-      // const user = await this.users.findOne(id, {
-      //   relations: ['subscribedPodcasts'],
-      // });
-      const subscribedPodcasts = await this.podcasts
-        .createQueryBuilder('P')
-        .innerJoin(
-          'user_subscribed_podcasts_podcast',
-          'M',
-          'P.id = "M"."podcastId"',
-        )
-        .where('"M"."userId" = :userId', { userId })
-        .getMany();
+      const user = await this.users.findOne(userId, {
+        relations: ['subscribedPodcasts'],
+      });
+      const subscribedPodcasts = user.subscribedPodcasts;
+      console.log(user.subscribedPodcasts);
+      // const subscribedPodcasts = await this.podcasts
+      //   .createQueryBuilder('P')
+      //   .innerJoin(
+      //     'user_subscribed_podcasts_podcast',
+      //     'M',
+      //     'P.id = "M"."podcastId"',
+      //   )
+      //   .where('"M"."userId" = :userId', { userId })
+      //   .getMany();
       if (!subscribedPodcasts) {
         return { ok: false, error: 'subscribedPodcasts not found' };
       }

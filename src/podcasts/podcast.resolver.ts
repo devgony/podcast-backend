@@ -21,6 +21,7 @@ import {
 import { GetCategoriesOutput } from './dtos/get-categories.dto';
 import { GetEpisodesInput, GetEpisodesOutput } from './dtos/get-episodes.dto';
 import { GetMyPodcastsOutput } from './dtos/get-my-podcasts.dto';
+import { GetMyRatingInput, GetMyRatingOutput } from './dtos/get-my-rating';
 import { GetPodcastInput, GetPodcastOutput } from './dtos/get-podcast.dto';
 import {
   GetPodcastsByCategoryInput,
@@ -174,5 +175,14 @@ export class PodcastResolver {
   @Role(['Host'])
   getMyPodcasts(@AuthUser() authUser: User): Promise<GetMyPodcastsOutput> {
     return this.podcastService.getMypodcasts(authUser);
+  }
+
+  @Query(returns => GetMyRatingOutput)
+  @Role(['Any'])
+  getMyRating(
+    @AuthUser() { id }: User,
+    @Args('input') getMyRatingInput: GetMyRatingInput,
+  ): Promise<GetMyRatingOutput> {
+    return this.podcastService.getMyRating(id, getMyRatingInput);
   }
 }
