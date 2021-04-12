@@ -65,7 +65,7 @@ export class UsersResolver {
   }
 
   @Mutation(returns => SubscribeToPodcastOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   subscribeToPodcast(
     @AuthUser() { id: userId }: User,
     @Args('input') subscribeToPodcastInput: SubscribeToPodcastInput,
@@ -95,7 +95,7 @@ export class UsersResolver {
   }
 
   @Query(returns => DidISubscribeOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   didISubscribe(
     @AuthUser() { id }: User,
     @Args('input') didISubscribeInput: DidISubscribeInput,
