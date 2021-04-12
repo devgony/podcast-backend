@@ -144,7 +144,7 @@ export class PodcastResolver {
   }
 
   @Mutation(returns => ReviewPodcastOutput)
-  @Role(['Listener'])
+  @Role(['Any'])
   reviewPodcast(
     @AuthUser() { id: userId }: User,
     @Args('input') reviewPodcastInput: ReviewPodcastInput,
